@@ -1,10 +1,3 @@
-/*
- * @Description: 
- * @Author: chengyuming
- * @Date: 2019-07-31 21:57:28
- * @LastEditors: chengyuming
- * @LastEditTime: 2019-09-04 15:00:31
- */
 module.exports = {
   plugins: [
     [
@@ -17,29 +10,34 @@ module.exports = {
         }
       }
     ],
-    [
-      '@vssue/vuepress-plugin-vssue', {
-        // 设置 `platform` 而不是 `api`
-        platform: 'github',
-        // locale: 'zh', // 语言设置
-        // 其他的 Vssue 配置
-        owner: 'cym-git', // github账户名称
-        repo: 'cym-git.github.io', // Github博客仓库
-        clientId: '74b59bdd634bffbe5002', // github上面申请的clientId
-        clientSecret: 'a6cf61f1223501b85583ab5a8901115e3ad0be05', // github上面申请的clientSecret
-      }
-    ],
+    // 如果你要配置 Vssue，请打开注释
+    // [
+    //   '@vssue/vuepress-plugin-vssue', {
+    //     // 设置 `platform` 而不是 `api`
+    //     platform: 'github',
+    //     // locale: 'zh', // 语言设置
+    //     // 其他的 Vssue 配置
+    //     owner: 'xxxx', // github账户名称
+    //     repo: 'xxxx', // Github博客仓库
+    //     clientId: 'xxxx', // github上面申请的clientId
+    //     clientSecret: 'xxxxxxxxxxxx', // github上面申请的clientSecret
+    //   }
+    // ],
     ['@vuepress/nprogress'],
     ['@vuepress/back-to-top'],
     ['@vuepress/medium-zoom', true],
     ['@vuepress/pwa', {
       serviceWorker: true,
       // popupComponent: 'MySWUpdatePopup',
-      updatePopup: true
-      // updatePopup: {
-      //   message: "发现新内容可用",
-      //   buttonText: "刷新"
-      // }
-    }]
+      // updatePopup: true
+      updatePopup: {
+        message: "发现新内容可用",
+        buttonText: "刷新"
+      }
+    }],
+    // 如果你要配置 Google Analytics，请打开注释
+    // ['@vuepress/google-analytics', {
+    //   ga: 'xxxxxxxxxxxxxx'  // Google Analytics ID
+    // }],
   ]
 }

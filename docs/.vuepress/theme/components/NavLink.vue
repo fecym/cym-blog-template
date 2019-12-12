@@ -50,3 +50,9 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+.nav-link 
+  position relative
+  z-index 2
+</style>

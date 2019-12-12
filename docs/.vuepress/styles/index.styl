@@ -1,0 +1,23 @@
+p.p-images img {
+  border-radius 5px
+}
+
+@media (max-width: $MQMobile) {
+  // 更改移动端代码块样式
+  .content__default div[class*="language-"] {
+    margin 0 -.3rem !important
+    border-radius 5px !important
+  }
+  // 更改移动端代码块行号样式
+  div[class*="language-"].line-numbers-mode {
+    &::after {
+      width 2rem !important
+    }
+    .line-numbers-wrapper {
+      width 2rem !important
+    }
+    pre {
+      padding-left 2.3rem !important
+    }
+  }
+}

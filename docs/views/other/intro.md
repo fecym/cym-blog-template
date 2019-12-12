@@ -70,7 +70,7 @@
       details: 享受 Vue + webpack 的开发体验，在 Markdown 中使用 Vue 组件，同时可以使用 Vue 来开发自定义主题。
     - title: 高性能
       details: VuePress 为每个页面预渲染生成静态的 HTML，同时在页面被加载的时候，将作为 SPA 运行。
-    footer: MIT Licensed | Copyright © 2018-present Evan You
+    footer: MIT Licensed | Copyright © 2018-present xxxx
     ---
 ```
 
@@ -178,13 +178,13 @@ module.exports = {
 - 首先你需啊在 github 上面申请一个 Personal access tokens，用来配置你的 Travis
 - 在 github 界面，点击 **你的头像 -> Settings -> Developer settings -> Personal access tokens** 进入 Personal access tokens 申请页面，点击 Generate new token 按钮生成 token ，或者你嫌麻烦可以直接点这 [传送门](https://github.com/settings/tokens)
 
-<p align="center">
+<p align="center" class="p-images">
   <img :src="$withBase('/imgs/Generate-token.png')""/>
 </p>
 
 - 进去之后，你可以输入一个名字，随便一个名字，你可以理解为一个全局的变量，你记住就可以了，下面的权限你都选中，然后点击 **Generate token** 就会生成一个 **Personal access tokens**
 
-<p align="center">
+<p align="center" class="p-images">
   <img :src="$withBase('/imgs/Generate-token-after.png')""/>
 </p>
 
@@ -195,21 +195,21 @@ module.exports = {
 - 进入 [Travis 官网](https://travis-ci.org/) 用 github 账号登录
 - 在里面选择你要进行部署的项目，如下图
 
-<p align="center">
+<p align="center" class="p-images">
   <img :src="$withBase('/imgs/Travis-setting-project.png')""/>
 </p>
 
 - **cym-git.github.io** 是我部署到的项目名字，也就是博客的地址，不需要把它打勾，我们需要打勾的是 **docs** 因为是从这个项目打包后直接部署到 **cym-git.github.io** 里面，这个以后进入的入口是点击 头像 -> Settings 进入，第一次进入会直接进入这个页面的
 - 然后我们点击 logo 图标进入首页，左边会出现你选择的项目，然后最右边的 **More options**
 
-<p align="center">
+<p align="center" class="p-images">
   <img :src="$withBase('/imgs/Travis-setting-project-after.png')""/>
 </p>
 
 - 然后如下图，把在 **github** 里面生成的 **Personal access tokens** 放到 **Value** 里面，**Name** 里面起个名字。然后点击 **Add**，我起的名字叫做 blog
 - 还需要添加一个地址，就是你要部署到 github 地址，不需要带 **https** 的，比如我的地址是 **github.com/cym-git/cym-git.github.io.git**，**name** 是 **address**
 
-<p align="center">
+<p align="center" class="p-images">
   <img :src="$withBase('/imgs/Travis-setting-project-settings-token.png')""/>
 </p>
 
@@ -258,7 +258,10 @@ module.exports = {
 
 ## 添加评论系统
 
-- vuepress 是可以为自己的博客添加评论系统的，而且很简单
+### Vssue
+
+- [`Vssue`](https://vssue.js.org/zh/guide/) 是一个 Vue 组件 / 插件，可以为你的静态页面开启评论功能。
+- 具体可查看官网，这里记录基本用法
 - 首先添加评论系统授权，所以要在 **github** 中生成 **clientID** 和 **clientSecret**
 - 点击 **你的头像** -> **Settings** -> **Developer settings** -> **OAuth Apps** 里面点击 **New OAuth App** 按钮，或者直接点[这里](https://github.com/settings/applications/new)
 - 准备工作做完了，接下来我们只需要配置两步就可以了
@@ -292,8 +295,60 @@ module.exports = {
 <Vssue title="Vssue Demo" />
 ```
 
-- 此时你的博客上的就会显示，像我下面显示评论一样了
+### Valine
+
+- [`Valine`](https://valine.js.org/) 是一个第三方的评论模块，可用于集成于我们的系统
+- 这个用法就没有没有那么麻烦了，只要在 `Valine` 注册一下，申请一个 `appId` 和 `appKey`
+- 然后实例化 valine 即可
+
+```js
+  const valineConfig = this.$themeConfig.valineConfig
+    if (valineConfig) {
+      const Valine = require('valine');
+      const AV = require('leancloud-storage')
+      if (typeof window !== 'undefined') {
+        this.window = window
+        window.AV = AV
+      }
+
+      new Valine({
+        el: '#valine' ,
+        appId: valineConfig.appId, // your appId
+        appKey: valineConfig.appKey, // your appKey
+        placeholder: valineConfig.placeholder || 'just go go',
+        notify: valineConfig.notify || false,
+        verify: valineConfig.verify || false,
+        avatar: valineConfig.avatar || 'retro',
+        visitor: valineConfig.visitor || true,
+        recordIP: valineConfig.recordIP || false,
+        path: window.location.pathname
+      });
+    }
+  }
+```
+
+- 你可以做成一个组件，到时候用的地方直接引入这个组件即可
+- 或者你也可以用插件，在 plugins 中配置如下
+
+```js
+module.exports = {
+  plugins: [
+    [
+      'vuepress-plugin-comment',
+      {
+        choosen: 'valine',
+        // options选项中的所有参数，会传给Valine的配置
+        options: {
+          el: '#valine-vuepress-comment',
+          appId: 'Your own appId',
+          appKey: 'Your own appKey'
+        }
+      }
+    ]
+  ]
+}
+```
 
 :tada: :100:
 
-<Vssue title="Vssue Demo" />
+<!-- <Vssue title="Vssue Demo" /> -->

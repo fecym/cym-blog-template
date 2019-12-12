@@ -30,8 +30,8 @@ export default {
 	},
 
 	mounted() {
-		const theme = localStorage.getItem('reco-theme')
-		const night = localStorage.getItem('reco-night')
+		const theme = localStorage.getItem('cym-theme')
+		const night = localStorage.getItem('cym-night')
 		const classes = document.body.classList;
 
 		this.darkTheme = night === 'true' ? true : false
@@ -41,7 +41,7 @@ export default {
 
 	methods: {
 		toggleDarkTheme() {
-			localStorage.setItem('reco-night', this.darkTheme)
+			localStorage.setItem('cym-night', this.darkTheme)
 			const classes = document.body.classList;
 			if (this.darkTheme) {
 				const oldColor = [...classes]
@@ -62,7 +62,7 @@ export default {
 			const themes = colorThemes.map(colorTheme => `reco-theme-${colorTheme}`);
 
 			if (!theme) {
-				if (moveClass) localStorage.removeItem('reco-theme');
+				if (moveClass) localStorage.removeItem('cym-theme');
 				classes.remove(...themes);
 				return 
 			}
@@ -71,9 +71,9 @@ export default {
 
 			if (moveClass) {
 				classes.add(`reco-theme-${theme}`);
-				localStorage.setItem('reco-theme', theme);
+				localStorage.setItem('cym-theme', theme);
 			} else {
-				localStorage.removeItem('reco-theme')
+				localStorage.removeItem('cym-theme')
 				classes.remove(`reco-theme-${theme}`);
 			}
 		}

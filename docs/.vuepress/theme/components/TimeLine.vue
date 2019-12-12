@@ -8,7 +8,7 @@
 <template>
 <div>
   <ul class="timeline-wrapper">
-    <li class="desc">那年我背井离乡，导致一村子的人都没有水喝。</li>
+    <li class="desc">{{ desc }}</li>
     <li v-for="(item, index) in formatPagesArr" :key="index">
       <h3 class="year">{{item.year}}</h3>
       <ul class="year-wrapper">
@@ -34,7 +34,8 @@ export default {
       currentTag: '',
       currentPage: 1,
       formatPages: {},
-      formatPagesArr: []
+      formatPagesArr: [],
+      desc: '那年我背井离乡，导致一村子的人都没有水喝。'
     }
   },
   props: {
@@ -56,7 +57,8 @@ export default {
     getPages (tag) {
       let pages = this.$site.pages
       pages = pages.filter(item => {
-        const { home, isTimeLine, date } = item.frontmatter
+        const { home, isTimeLine, date, desc } = item.frontmatter
+        if (desc) this.desc = desc
         return !(home == true || isTimeLine == true || date === undefined)
       })
       // reverse()是为了按时间最近排序排序
