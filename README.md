@@ -4,7 +4,7 @@
 
 ## Version
 
-1.1.2
+1.1.3
 
 ## Experience
 
@@ -70,5 +70,7 @@ yarn build
 [About me](http://chengyuming.cn/)
 
 ## Q&A
+
+博客模板下载完毕，下载博客依赖的时候推荐使用 yarn 下载
 
 如果您有任何疑问请来[这里留言](http://chengyuming.cn/views/big-front-end/npm/cli.html#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5)，我将会为您一一解答哦
