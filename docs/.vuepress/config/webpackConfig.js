@@ -1,10 +1,3 @@
-/*
- * @Description:
- * @Author: chengyuming
- * @Date: 2019-09-03 22:38:46
- * @LastEditors: chengyuming
- * @LastEditTime: 2019-11-11 23:36:01
- */
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
@@ -14,7 +7,7 @@ module.exports = {
     // 移除 prefetch 插件
     config.plugins.delete('prefetch')
     // 移除 preload 插件
-    config.plugins.delete('preload');
+    config.plugins.delete('preload')
     config.module
       .rule('images')
       .use('image-webpack-loader')

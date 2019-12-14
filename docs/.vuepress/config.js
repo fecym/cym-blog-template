@@ -11,8 +11,9 @@ const { chainWebpack, configureWebpack } = require('./config/webpackConfig')
 const head = require('./config/head')
 const markdown = require('./config/markdown')
 module.exports = {
-  title: "blog-title",
+  title: "My Blog",
   description: 'Today, have you studied yet?',
+  // 打包后的文件夹
   dest: './love',
   head,
   theme: 'reco',
