@@ -1,16 +1,20 @@
 # About My Cli
 
-该脚手架是基于 _vuepress_ 框架搭建，然后使用了 _vuepress-theme-reco-cli_ 主题，由于该主题有些我不喜欢的地方，我重新做了简单封装，做成了自己的博客项目的脚手架，欢迎交流相互学习。
+该脚手架是基于 `vuepress` 框架搭建，然后使用了 `vuepress-theme-reco-cli` 主题，对该主题做了一些简单封装，做成了自己的博客项目的脚手架，欢迎交流相互学习。
 
-该项目是 `cym-blog` 脚手架的模板文件，下面介绍是脚手架的使用，[脚手架地址](https://www.npmjs.com/package/cym-blog)
+该项目是 `cym-blog` 脚手架的模板文件，[脚手架地址](https://www.npmjs.com/package/cym-blog)
 
 ## Version
 
-2.0.0
+cym-blog -v 1.1.8
+cym-blog-template -v 2.0.0
 
-## Experience
+## Example
 
 ```sh
+
+# show version
+npx cym-blog -v
 
 # create
 npx cym-blog init my-blog
@@ -69,7 +73,7 @@ yarn build
 
 ## Blog
 
-[About me](http://chengyuming.cn/)
+[About me](https://chengyuming.cn/)
 
 ## Q&A
 
