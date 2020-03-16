@@ -1,0 +1,29 @@
+.footer {
+  position: relative;
+  z-index: 2;
+  padding: 2.5rem;
+  border-top: 1px solid $borderColor;
+  text-align: center;
+  color: lighten($textColor, 25%);
+  font-weight 500
+  load-start();
+
+  .record {
+    margin-left: 1.5rem;
+    font-size: 15px;
+    b {
+      font-weight normal
+    }
+  }
+
+  .record-link {
+    cursor: pointer;
+    font-weight: normal;
+    // font-weight 500
+  }
+}
+ @media (max-width: $MQMobile) {
+  .footer .record b {
+    display none
+  }
+}

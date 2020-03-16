@@ -21,7 +21,8 @@
       :style="linksWrapMaxWidth ? {
         'max-width': linksWrapMaxWidth + 'px'
       } : {}">
-      <Theme />
+
+      <Mode />
       <AlgoliaSearchBox
         v-if="isAlgoliaSearch"
         :options="algolia"/>
@@ -34,12 +35,12 @@
 <script>
 import AlgoliaSearchBox from '@AlgoliaSearchBox'
 import SearchBox from '@SearchBox'
-import SidebarButton from '@theme/components/SidebarButton.vue'
-import NavLinks from '@theme/components/NavLinks.vue'
-import Theme from '@theme/components/Theme'
+import SidebarButton from '@theme/components/SidebarButton'
+import NavLinks from '@theme/components/NavLinks'
+import Mode from '@theme/components/Mode'
 
 export default {
-  components: { SidebarButton, NavLinks, SearchBox, AlgoliaSearchBox, Theme },
+  components: { SidebarButton, NavLinks, SearchBox, AlgoliaSearchBox, Mode },
 
   data () {
     return {
@@ -54,8 +55,8 @@ export default {
       if (document.documentElement.clientWidth < MOBILE_DESKTOP_BREAKPOINT) {
         this.linksWrapMaxWidth = null
       } else {
-        this.linksWrapMaxWidth = this.$el.offsetWidth - NAVBAR_VERTICAL_PADDING
-          - (this.$refs.siteName && this.$refs.siteName.offsetWidth || 0)
+        this.linksWrapMaxWidth = this.$el.offsetWidth - NAVBAR_VERTICAL_PADDING -
+          (this.$refs.siteName && this.$refs.siteName.offsetWidth || 0)
       }
     }
     handleLinksWrapWidth()
@@ -82,13 +83,16 @@ function css (el, property) {
 </script>
 
 <style lang="stylus">
+@require '../styles/mode.styl'
+
 $navbar-vertical-padding = 0.7rem
 $navbar-horizontal-padding = 1.5rem
 
 .navbar
   padding $navbar-vertical-padding $navbar-horizontal-padding
   line-height $navbarHeight - 1.4rem
-  box-shadow 0 1px 6px 0 rgba(32,33,36,.28)
+  box-shadow var(--box-shadow)
+  background var(--background-color)
   a, span, img
     display inline-block
   .logo
@@ -99,18 +103,19 @@ $navbar-horizontal-padding = 1.5rem
   .site-name
     font-size 1.2rem
     font-weight 600
-    color $textColor
+    color var(--text-color)
     position relative
+    background var(--background-color)
   .links
     padding-left 1.5rem
     box-sizing border-box
-    background-color white
     white-space nowrap
     font-size 0.9rem
     position absolute
     right $navbar-horizontal-padding
     top $navbar-vertical-padding
     display flex
+    background-color var(--background-color)
     .search-box
       flex: 0 0 auto
       vertical-align top

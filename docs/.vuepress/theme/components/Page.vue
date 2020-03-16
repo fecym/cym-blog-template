@@ -1,98 +1,109 @@
 <template>
-  <main class="page" :class="recoShow?'reco-show': 'reco-hide'">
-    <slot name="top"/>
+  <main class="page">
+    <ModuleTransition>
+      <slot v-show="recoShowModule" name="top"/>
+    </ModuleTransition>
 
-    <div class="page-title" v-if="!(isTimeLine)">
-      <h1>{{$page.title}}</h1>
-      <hr>
-      <PageInfo :pageInfo="$page"></PageInfo>
-    </div>
-
-    <Content/>
-
-    <TimeLine v-if="isTimeLine"></TimeLine>
-
-    <footer class="page-edit">
-      <div
-        class="edit-link"
-        v-if="editLink"
-      >
-        <a
-          :href="editLink"
-          target="_blank"
-          rel="noopener noreferrer"
-        >{{ editLinkText }}</a>
-        <OutboundLink/>
+    <ModuleTransition delay="0.08">
+      <div v-show="recoShowModule" class="page-title">
+        <h1>{{$page.title}}</h1>
+        <hr>
+        <PageInfo :pageInfo="$page" :showAccessNumber="showAccessNumber"></PageInfo>
       </div>
+    </ModuleTransition>
 
-      <div
-        class="last-updated"
-        v-if="lastUpdated"
-      >
-        <span class="prefix">{{ lastUpdatedText }}: </span>
-        <span class="time">{{ lastUpdated }}</span>
-      </div>
-    </footer>
+    <ModuleTransition delay="0.16">
+      <Content v-show="recoShowModule" class="theme-reco-content" />
+    </ModuleTransition>
 
-    <div class="page-nav" v-if="prev || next">
-      <p class="inner">
-        <span
-          v-if="prev"
-          class="prev"
+    <ModuleTransition delay="0.24">
+      <footer v-show="recoShowModule" class="page-edit">
+        <div
+          class="edit-link"
+          v-if="editLink"
         >
-          ←
-          <router-link
+          <a
+            :href="editLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >{{ editLinkText }}</a>
+          <OutboundLink/>
+        </div>
+
+        <div
+          class="last-updated"
+          v-if="lastUpdated"
+        >
+          <span class="prefix">{{ lastUpdatedText }}: </span>
+          <span class="time">{{ lastUpdated }}</span>
+        </div>
+      </footer>
+    </ModuleTransition>
+
+    <ModuleTransition delay="0.32">
+      <div class="page-nav" v-if="recoShowModule && (prev || next)">
+        <p class="inner">
+          <span
             v-if="prev"
             class="prev"
-            :to="prev.path"
           >
-            {{ prev.title || prev.path }}
-          </router-link>
-        </span>
+            ←
+            <router-link
+              v-if="prev"
+              class="prev"
+              :to="prev.path"
+            >
+              {{ prev.title || prev.path }}
+            </router-link>
+          </span>
 
-        <span
-          v-if="next"
-          class="next"
-        >
-          <router-link
+          <span
             v-if="next"
-            :to="next.path"
+            class="next"
           >
-            {{ next.title || next.path }}
-          </router-link>
-          →
-        </span>
-      </p>
-    </div>
+            <router-link
+              v-if="next"
+              :to="next.path"
+            >
+              {{ next.title || next.path }}
+            </router-link>
+            →
+          </span>
+        </p>
+      </div>
+    </ModuleTransition>
 
-    <slot name="bottom"/>
+    <ModuleTransition delay="0.40">
+      <slot v-show="recoShowModule" name="bottom"/>
+    </ModuleTransition>
   </main>
 </template>
 
 <script>
 import PageInfo from '@theme/components/PageInfo'
-import { resolvePage, outboundRE, endingSlashRE } from '../util'
-import TimeLine from '@theme/components/TimeLine'
+import { resolvePage, outboundRE, endingSlashRE } from '@theme/helpers/utils'
+import ModuleTransition from '@theme/components/ModuleTransition'
+import moduleTransitonMixin from '@theme/mixins/moduleTransiton'
 
 export default {
-  components: { PageInfo, TimeLine},
+  mixins: [moduleTransitonMixin],
+  components: { PageInfo, ModuleTransition },
 
   props: ['sidebarItems'],
 
   data () {
     return {
-      recoShow: false
+      isHasKey: true
     }
   },
 
   computed: {
-    isTimeLine () {
-      return this.$frontmatter.isTimeLine
+    showAccessNumber () {
+      return this.$themeConfig.commentsSolution === 'valine'
     },
     lastUpdated () {
       return this.$page.lastUpdated
     },
-
     lastUpdatedText () {
       if (typeof this.$themeLocaleConfig.lastUpdated === 'string') {
         return this.$themeLocaleConfig.lastUpdated
@@ -102,7 +113,6 @@ export default {
       }
       return 'Last Updated'
     },
-
     prev () {
       const prev = this.$frontmatter.prev
       if (prev === false) {
@@ -113,7 +123,6 @@ export default {
         return resolvePrev(this.$page, this.sidebarItems)
       }
     },
-
     next () {
       const next = this.$frontmatter.next
       if (next === false) {
@@ -124,10 +133,9 @@ export default {
         return resolveNext(this.$page, this.sidebarItems)
       }
     },
-
     editLink () {
       if (this.$frontmatter.editLink === false) {
-        return
+        return false
       }
       const {
         repo,
@@ -140,27 +148,13 @@ export default {
       if (docsRepo && editLinks && this.$page.relativePath) {
         return this.createEditLink(repo, docsRepo, docsDir, docsBranch, this.$page.relativePath)
       }
+      return ''
     },
-
     editLinkText () {
       return (
-        this.$themeLocaleConfig.editLinkText
-        || this.$themeConfig.editLinkText
-        || `Edit this page`
+        this.$themeLocaleConfig.editLinkText || this.$themeConfig.editLinkText || `Edit this page`
       )
     }
-  },
-
-  mounted () {
-    this.recoShow = true
-
-    const keys = this.$frontmatter.keys
-    if (!keys) {
-      this.isHasKey =  true
-      return
-    }
-
-    this.isHasKey = keys && keys.indexOf(sessionStorage.getItem('key')) > -1
   },
 
   methods: {
@@ -171,12 +165,12 @@ export default {
           ? docsRepo
           : repo
         return (
-          base.replace(endingSlashRE, '')
-           + `/src`
-           + `/${docsBranch}/`
-           + (docsDir ? docsDir.replace(endingSlashRE, '') + '/' : '')
-           + path
-           + `?mode=edit&spa=0&at=${docsBranch}&fileviewer=file-view-default`
+          base.replace(endingSlashRE, '') +
+           `/src` +
+           `/${docsBranch}/` +
+           (docsDir ? docsDir.replace(endingSlashRE, '') + '/' : '') +
+           path +
+           `?mode=edit&spa=0&at=${docsBranch}&fileviewer=file-view-default`
         )
       }
 
@@ -184,11 +178,11 @@ export default {
         ? docsRepo
         : `https://github.com/${docsRepo}`
       return (
-        base.replace(endingSlashRE, '')
-        + `/edit`
-        + `/${docsBranch}/`
-        + (docsDir ? docsDir.replace(endingSlashRE, '') + '/' : '')
-        + path
+        base.replace(endingSlashRE, '') +
+        `/edit` +
+        `/${docsBranch}/` +
+        (docsDir ? docsDir.replace(endingSlashRE, '') + '/' : '') +
+        path
       )
     }
   }
@@ -227,20 +221,16 @@ function flatten (items, res) {
 
 <style lang="stylus">
 @require '../styles/wrapper.styl'
-@require '../styles/loadMixin.styl'
 
 .page
-  padding-top 6rem
+  padding-top 5rem
   padding-bottom 2rem
   display block
-  #time-line {
-    margin-top 0
-    padding-top 0
-  } 
   .page-title
     max-width: 740px;
     margin: 0 auto;
-    padding: 0rem 2.5rem;
+    padding: 1rem 2.5rem;
+    color var(--text-color)
   .page-edit
     @extend $wrapper
     padding-top 1rem
@@ -260,12 +250,6 @@ function flatten (items, res) {
       .time
         font-weight 400
         color #aaa
-  &.reco-hide.page {
-    load-start()
-  }
-  &.reco-show.page {
-    load-end(0.08s)
-  }          
 
 .page-nav
   @extend $wrapper
@@ -274,16 +258,15 @@ function flatten (items, res) {
   .inner
     min-height 2rem
     margin-top 0
-    border-top 1px solid $borderColor
+    border-top 1px solid var(--border-color)
     padding-top 1rem
     overflow auto // clear float
   .next
     float right
 
-
 @media (max-width: $MQMobile)
   .page-title
-    padding: 0 1rem;  
+    padding: 0 1rem;
   .page-edit
     .edit-link
       margin-bottom .5rem

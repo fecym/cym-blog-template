@@ -1,103 +1,94 @@
 <template>
   <div class="tags-wrapper" :class="recoShow?'reco-show': 'reco-hide'">
     <Common :sidebar="false" :isComment="false"></Common>
-    <div class="tags">
-      <span 
-        v-for="(item, index) in tags" 
-        :key="index"
-        :class="{'active': item.name == currentTag}"
-        :style="{ 'backgroundColor': item.color }"
-        @click="getPagesByTags(item.name)">{{item.name}}</span>
-    </div>
-    <note-abstract 
-      class="list"
-      :data="posts"
-      :currentPage="currentPage"
-      :currentTag="currentTag"
-      @currentTag="getCurrentTag"></note-abstract>
-    
-    <pagation 
-      class="pagation"
-      :data="posts"
-      :currentPage="currentPage"
-      @getCurrentPage="getCurrentPage"></pagation>
+    <!-- 标签集合 -->
+    <ModuleTransition>
+      <TagList
+        v-show="recoShow"
+        class="tags"
+        :currentTag="currentTag"
+        @getCurrentTag="getPagesByTags"
+      ></TagList>
+    </ModuleTransition>
+    <!-- 博客列表 -->
+    <ModuleTransition delay="0.08">
+      <note-abstract
+        class="list"
+        :data="posts"
+        :currentPage="currentPage"
+        :currentTag="currentTag"
+        :pageSize="pageSize"
+        @currentTag="getCurrentTag"
+      ></note-abstract>
+    </ModuleTransition>
+    <!-- 分页 -->
+    <ModuleTransition delay="0.16">
+      <pagation
+        class="pagation"
+        :total="posts.length"
+        :currentPage="currentPage"
+        :pageSize="pageSize"
+        @getCurrentPage="getCurrentPage"
+      ></pagation>
+    </ModuleTransition>
   </div>
 </template>
 
 <script>
+import TagList from '@theme/components/TagList.vue'
 import Common from '@theme/components/Common.vue'
 import NoteAbstract from '../components//NoteAbstract.vue'
-import Pagation from '../components//Pagation.vue'
+import ModuleTransition from '@theme/components/ModuleTransition'
+import { filterPosts, sortPostsByStickyAndDate } from '@theme/helpers/postData'
 
 export default {
-  components: { Common, NoteAbstract, Pagation },
+  components: { Common, NoteAbstract, ModuleTransition, TagList },
 
-  data () {
+  data() {
     return {
       posts: [],
       tags: [],
-      currentTag: '',
+      currentTag: '全部',
       currentPage: 1,
+      pageSize: 5,
       recoShow: false
     }
   },
 
-  created () {
-    if (this.$tags.list.length > 0) {
-      const currentTag = this.$route.query.tag ? this.$route.query.tag : this.$tags.list[0].name
-      let tags = this.$tags.list
-      tags.map(item => {
-        const color = this._tagColor()
-        item.color = color
-        return tags
-      })
-      this.tags = tags
-
-      this.getPagesByTags(currentTag)
-    }
+  created() {
+    this.getPagesByTags(this.currentTag)
   },
 
-  mounted () {
+  mounted() {
     this.recoShow = true
   },
 
   methods: {
-
     // 根据分类获取页面数据
-    getPagesByTags (currentTag) {
-
+    getPagesByTags(currentTag) {
+      let posts = []
+      if (currentTag === '全部') {
+        const _posts = this.$tags.list.reduce((prev, item) => prev.concat(item.posts || item.pages), [])
+        posts = filterPosts(_posts)
+      } else {
+        // posts = this.$tags.map[currentTag].posts
+        posts = this.$tags.map[currentTag].posts || this.$tags.map[currentTag].pages
+      }
       this.currentTag = currentTag
-
-      let posts = this.$tags.map[currentTag].posts
-      posts.sort((a, b) => {
-        return this._getTimeNum(b) - this._getTimeNum(a)
-      })
-      // reverse()是为了按时间最近排序排序
+      // 排序
+      sortPostsByStickyAndDate(posts)
       this.posts = posts.length == 0 ? [] : posts
-      
-      this.getCurrentPage(1);
+      this.getCurrentPage(this.currentPage);
     },
 
-    getCurrentTag (tag) {
+    getCurrentTag(tag) {
       this.$emit('currentTag', tag)
     },
 
-    getCurrentPage (page) {
+    getCurrentPage(page) {
       this.currentPage = page
       this.$page.currentPage = page
     },
-
-    _tagColor () {
-      // 红、蓝、绿、橙、灰
-      const tagColorArr = ['#f26d6d', '#3498db', '#67cc86', '#fb9b5f', '#838282']
-      const index = Math.floor(Math.random() * tagColorArr.length)
-      return tagColorArr[index]
-    },
-
-    // 获取时间的数字类型
-    _getTimeNum (date) {
-      return parseInt(new Date(date.frontmatter.date).getTime())
-    }
   }
 }
 </script>
@@ -105,14 +96,17 @@ export default {
 <style src="../styles/theme.styl" lang="stylus"></style>
 
 <style lang="stylus" scoped>
-@require '../styles/loadMixin.styl'
-.tags-wrapper
-  max-width: 740px;
+// @require '../styles/loadMixin.styl'
+.tags-wrapper {
+  // max-width: 740px;
+  max-width: $contentWidth;
   margin: 0 auto;
-  padding: 4.6rem 2.5rem 0; 
-  .tags
-    margin 30px 0
-    span
+  padding: 4.6rem 2.5rem 0;
+
+  .tags {
+    margin: 30px 0;
+
+    span {
       vertical-align: middle;
       margin: 4px 4px 10px;
       padding: 4px 8px;
@@ -122,30 +116,43 @@ export default {
       background: #fff;
       color: #fff;
       font-size: 13px;
-      box-shadow 0 1px 4px 0 rgba(0,0,0,0.2)
-      transition: all .5s
-      &:hover
-        transform scale(1.04)
-      &.active
-        transform scale(1.2)
-  &.reco-hide {
-    .tags, .list, .pagation {
-      load-start()
+      box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+      transition: all 0.5s;
+
+      &:hover {
+        transform: scale(1.04);
+      }
+
+      &.active {
+        transform: scale(1.2);
+      }
     }
   }
+
+  &.reco-hide {
+    .tags, .list, .pagation {
+      load-start();
+    }
+  }
+
   &.reco-show {
     .tags {
-      load-end(0.08s)
+      load-end(0.08s);
     }
-    .list {
-      load-end(0.16s)
-    }
-    .pagation {
-      load-end(0.24s)
-    }
-  }      
 
-@media (max-width: $MQMobile)
-  .tags-wrapper
+    .list {
+      load-end(0.16s);
+    }
+
+    .pagation {
+      load-end(0.24s);
+    }
+  }
+}
+
+@media (max-width: $MQMobile) {
+  .tags-wrapper {
     padding: 5rem 0.6rem 0;
+  }
+}
 </style>

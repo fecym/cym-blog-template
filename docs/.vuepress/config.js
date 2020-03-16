@@ -1,10 +1,3 @@
-/*
- * @Description: 
- * @Author: chengyuming
- * @Date: 2019-08-01 11:28:21
- * @LastEditors: chengyuming
- * @LastEditTime: 2019-11-13 21:33:23
- */
 const { themeConfig } = require('./config/themeConfig')
 const { plugins } = require('./config/plugins')
 const { chainWebpack, configureWebpack } = require('./config/webpackConfig')
@@ -16,7 +9,7 @@ module.exports = {
   // 打包后的文件夹
   dest: './love',
   head,
-  theme: 'reco',
+  theme: require.resolve('./theme'),
   serviceWorker: true, // 是否开启 PWA
   themeConfig,
   markdown,

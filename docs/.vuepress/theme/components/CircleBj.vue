@@ -13,11 +13,11 @@ export default {
     let startX = 0;
     let startY = 0;
     let canvas = null
-    const dtr = function(d) {
+    const dtr = function (d) {
       return (d * Math.PI) / 180;
     };
 
-    const rnd = function() {
+    const rnd = function () {
       return Math.sin((Math.floor(Math.random() * 360) * Math.PI) / 180);
     };
 
@@ -49,7 +49,7 @@ export default {
         y: _height / 2,
         z: 0
       },
-      update: function() {
+      update: function () {
         cam.dist.x = cam.dest.x - cam.obj.x;
         cam.dist.y = cam.dest.y - cam.obj.y;
         cam.dist.z = cam.dest.z - cam.obj.z;
@@ -63,21 +63,21 @@ export default {
           Math.sqrt(cam.dist.x * cam.dist.x + cam.dist.z * cam.dist.z) /
           Math.sqrt(
             cam.dist.x * cam.dist.x +
-              cam.dist.y * cam.dist.y +
-              cam.dist.z * cam.dist.z
+            cam.dist.y * cam.dist.y +
+            cam.dist.z * cam.dist.z
           );
         cam.ang.stheta =
           -cam.dist.y /
           Math.sqrt(
             cam.dist.x * cam.dist.x +
-              cam.dist.y * cam.dist.y +
-              cam.dist.z * cam.dist.z
+            cam.dist.y * cam.dist.y +
+            cam.dist.z * cam.dist.z
           );
       }
     };
     const trans = {
       parts: {
-        sz: function(p, sz) {
+        sz: function (p, sz) {
           return {
             x: p.x * sz.x,
             y: p.y * sz.y,
@@ -85,21 +85,21 @@ export default {
           };
         },
         rot: {
-          x: function(p, rot) {
+          x: function (p, rot) {
             return {
               x: p.x,
               y: p.y * Math.cos(dtr(rot.x)) - p.z * Math.sin(dtr(rot.x)),
               z: p.y * Math.sin(dtr(rot.x)) + p.z * Math.cos(dtr(rot.x))
             };
           },
-          y: function(p, rot) {
+          y: function (p, rot) {
             return {
               x: p.x * Math.cos(dtr(rot.y)) + p.z * Math.sin(dtr(rot.y)),
               y: p.y,
               z: -p.x * Math.sin(dtr(rot.y)) + p.z * Math.cos(dtr(rot.y))
             };
           },
-          z: function(p, rot) {
+          z: function (p, rot) {
             return {
               x: p.x * Math.cos(dtr(rot.z)) - p.y * Math.sin(dtr(rot.z)),
               y: p.x * Math.sin(dtr(rot.z)) + p.y * Math.cos(dtr(rot.z)),
@@ -107,7 +107,7 @@ export default {
             };
           }
         },
-        pos: function(p, pos) {
+        pos: function (p, pos) {
           return {
             x: p.x + pos.x,
             y: p.y + pos.y,
@@ -116,21 +116,21 @@ export default {
         }
       },
       pov: {
-        plane: function(p) {
+        plane: function (p) {
           return {
             x: p.x * cam.ang.cplane + p.z * cam.ang.splane,
             y: p.y,
             z: p.x * -cam.ang.splane + p.z * cam.ang.cplane
           };
         },
-        theta: function(p) {
+        theta: function (p) {
           return {
             x: p.x,
             y: p.y * cam.ang.ctheta - p.z * cam.ang.stheta,
             z: p.y * cam.ang.stheta + p.z * cam.ang.ctheta
           };
         },
-        set: function(p) {
+        set: function (p) {
           return {
             x: p.x - cam.obj.x,
             y: p.y - cam.obj.y,
@@ -138,7 +138,7 @@ export default {
           };
         }
       },
-      persp: function(p) {
+      persp: function (p) {
         return {
           x: ((p.x * cam.dist.z) / p.z) * cam.zoom,
           y: ((p.y * cam.dist.z) / p.z) * cam.zoom,
@@ -146,7 +146,7 @@ export default {
           p: cam.dist.z / p.z
         };
       },
-      disp: function(p, disp) {
+      disp: function (p, disp) {
         return {
           x: p.x + disp.x,
           y: -p.y + disp.y,
@@ -154,7 +154,7 @@ export default {
           p: p.p
         };
       },
-      steps: function(_obj_, sz, rot, pos, disp) {
+      steps: function (_obj_, sz, rot, pos, disp) {
         var _args = trans.parts.sz(_obj_, sz);
         _args = trans.parts.rot.x(_args, rot);
         _args = trans.parts.rot.y(_args, rot);
@@ -169,7 +169,7 @@ export default {
       }
     };
 
-    (function() {
+    (function () {
       class threeD {
         constructor(param) {
           this.transIn = {};
@@ -312,15 +312,15 @@ export default {
           }
         }
         animation() {
-          window.requestAnimationFrame = (function() {
+          window.requestAnimationFrame = (function () {
             return (
               window.requestAnimationFrame ||
-              function(callback, element) {
+              function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
               }
             );
           })();
-          const animation = function() {
+          const animation = function () {
             this.update();
             this.draw();
             window.requestAnimationFrame(animation);
@@ -331,14 +331,14 @@ export default {
           this.animation();
           window.addEventListener(
             "mousemove",
-            function(e) {
+            function (e) {
               this.toX = (e.clientX - this.canvas.width / 2) * -0.8;
               this.toY = (e.clientY - this.canvas.height / 2) * 0.8;
             }.bind(this)
           );
           window.addEventListener(
             'touchmove',
-            function(e) {
+            function (e) {
               e.preventDefault()
               this.toX = (e.touches[0].clientX - this.canvas.width / 2) * -0.8
               this.toY = (e.touches[0].clientY - this.canvas.height / 2) * 0.8
@@ -370,7 +370,7 @@ export default {
     })();
     window.addEventListener(
       "resize",
-      function() {
+      function () {
         canvas.width = _width = window.innerWidth;
         canvas.height = _height = window.innerHeight;
       },
@@ -386,7 +386,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    // z-index: 1;
     position: fixed;
   }
 }

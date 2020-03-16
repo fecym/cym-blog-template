@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import SidebarGroup from '@theme/components/SidebarGroup.vue'
-import SidebarLink from '@theme/components/SidebarLink.vue'
-import { isActive } from '../util'
+import SidebarGroup from '@theme/components/SidebarGroup'
+import SidebarLink from '@theme/components/SidebarLink'
+import { isActive } from '@theme/helpers/utils'
 
 export default {
   name: 'SidebarLinks',
@@ -33,7 +33,7 @@ export default {
 
   props: [
     'items',
-    'depth',  // depth of current sidebar links
+    'depth', // depth of current sidebar links
     'sidebarDepth' // depth of headers to be extracted
   ],
 

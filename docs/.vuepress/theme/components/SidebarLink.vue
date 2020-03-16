@@ -1,5 +1,5 @@
 <script>
-import { isActive, hashRE, groupHeaders } from '../util'
+import { isActive, hashRE, groupHeaders } from '@theme/helpers/utils'
 
 export default {
   functional: true,
@@ -30,15 +30,15 @@ export default {
       : selfActive
     const link = renderLink(h, item.path, item.title || item.path, active)
 
-    const configDepth = $page.frontmatter.sidebarDepth
-      || sidebarDepth
-      || $themeLocaleConfig.sidebarDepth
-      || $themeConfig.sidebarDepth
+    const configDepth = $page.frontmatter.sidebarDepth ||
+      sidebarDepth ||
+      $themeLocaleConfig.sidebarDepth ||
+      $themeConfig.sidebarDepth
 
     const maxDepth = configDepth == null ? 1 : configDepth
 
-    const displayAllHeaders = $themeLocaleConfig.displayAllHeaders
-      || $themeConfig.displayAllHeaders
+    const displayAllHeaders = $themeLocaleConfig.displayAllHeaders ||
+      $themeConfig.displayAllHeaders
 
     if (item.type === 'auto') {
       return [link, renderChildren(h, item.children, item.basePath, $route, maxDepth)]
@@ -79,31 +79,37 @@ function renderChildren (h, children, path, route, maxDepth, depth = 1) {
 
 <style lang="stylus">
 .sidebar .sidebar-sub-headers
-  padding-left 1rem
+  padding-left 1.5rem
   font-size 0.95em
+
+.sidebar-sub-headers a.sidebar-link
+  margin 0 1rem 0 0.6rem
 
 a.sidebar-link
   font-size 1em
   font-weight 400
-  display inline-block
-  color $textColor
-  border-left 0.25rem solid transparent
-  padding 0.35rem 1rem 0.35rem 1.25rem
+  display block!important
+  color var(--text-color)
+  padding 0.35rem 1rem 0.35rem .75rem
   line-height 1.4
-  width: 100%
+  margin 0 1rem 0 1.5rem
   box-sizing: border-box
+  border-radius .25rem
   &:hover
     color $accentColor
   &.active
     font-weight 600
-    color $accentColor
-    border-left-color $accentColor
+    color #fff
+    background $accentColor
+    // border-left-color $accentColor
   .sidebar-group &
-    padding-left 2rem
+    // padding-left 2rem
   .sidebar-sub-headers &
     padding-top 0.25rem
     padding-bottom 0.25rem
     border-left none
     &.active
       font-weight 500
+      background transparent
+      color $accentColor
 </style>

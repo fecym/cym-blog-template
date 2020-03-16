@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { isExternal, isMailto, isTel, ensureExt } from '../util'
+import { isExternal, isMailto, isTel, ensureExt } from '@theme/helpers/utils'
 
 export default {
   props: {
@@ -50,9 +50,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus" scoped>
-.nav-link 
-  position relative
-  z-index 2
-</style>

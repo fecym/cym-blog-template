@@ -2,8 +2,9 @@ const { nav } = require('./nav')
 module.exports = {
   themeConfig: {
     author: 'your-name',
-    // type: 'blog',
     nav,
+    // 不推荐使用这个
+    // type: 'blog',
     sidebar: 'auto',
     sidebarDepth: 4,
     lastUpdated: '最后修改时间',
@@ -26,7 +27,6 @@ module.exports = {
     // editLinks: true,
     // 默认为 "Edit this page"
     // editLinkText: '提出您宝贵的意见',
-    // 新增reco
     // 博客设置
     blogConfig: {
       tag: {
@@ -42,14 +42,20 @@ module.exports = {
     sidebar: 'auto',
     // valineConfig 配置
     valineConfig: {
-      appId: 'xxxxxxxxxxxxxxxxxxxxx',// your appId
-      appKey: 'xxxxxxxxxxxxxxxxxxxxx', // your appKey
+      // appId: 'xxxxxxxxxxxxxxxxxxxxx',// your appId
+      // appKey: 'xxxxxxxxxxxxxxxxxxxxx', // your appKey
       verify: true,
       placeholder: '你想说点什么...',
-      pageSize: 10,
+      pageSize: 5,
       // 是否记录评论者IP
       recordIP: true
     },
-    isComment: true
+    isComment: true,
+    // 新增网站备案号，必填
+    footerConf: {
+      record: '京ICP备 xxxxxxxxxx 号',
+      recordLink: 'http://beian.miit.gov.cn',
+      leftText: 'MIT Licensed | Copyright © 2019 - present'
+    }
   }
 }

@@ -1,10 +1,3 @@
-<!--
- * @Description: 
- * @Author: chengyuming
- * @Date: 2019-09-03 20:21:49
- * @LastEditors: chengyuming
- * @LastEditTime: 2019-09-04 15:27:57
- -->
 <template>
   <div
     class="dropdown-wrapper"
@@ -60,8 +53,8 @@
 </template>
 
 <script>
-import NavLink from '@theme/components/NavLink.vue'
-import DropdownTransition from '@theme/components/DropdownTransition.vue'
+import NavLink from '@theme/components/NavLink'
+import DropdownTransition from '@theme/components/DropdownTransition'
 
 export default {
   components: { NavLink, DropdownTransition },
@@ -87,6 +80,8 @@ export default {
 </script>
 
 <style lang="stylus">
+@require '../styles/mode.styl'
+
 .dropdown-wrapper
   cursor pointer
   .dropdown-title
@@ -100,10 +95,10 @@ export default {
   .nav-dropdown
     .dropdown-item
       color inherit
-      line-height 1.7
+      line-height 1.7rem
       h4
         margin 0.45rem 0 0
-        border-top 1px solid #eee
+        border-top 1px solid var(--border-color)
         padding 0.45rem 1.5rem 0 1.25rem
       .dropdown-subitem-wrapper
         padding 0
@@ -120,7 +115,6 @@ export default {
         padding 0 1.5rem 0 1.25rem
         &:hover
           color $accentColor
-          text-shadow: 0 .1px .2px $textColor
         &.router-link-active
           color $accentColor
           &::after
@@ -167,7 +161,7 @@ export default {
       // make the arrow always down at desktop
       border-left 4px solid transparent
       border-right 4px solid transparent
-      border-top 6px solid $arrowBgColor
+      border-top 6px solid $textColorSub
       border-bottom 0
     .nav-dropdown
       display none
@@ -179,11 +173,11 @@ export default {
       position absolute
       top 100%
       right 0
-      background-color #fff
+      background-color var(--background-color)
       padding 0.6rem 0
-      box-shadow: 0 4px 20px 0 rgba(0,0,0,.2);
+      box-shadow: var(--box-shadow);
       text-align left
-      border-radius 0.25rem
+      border-radius $borderRadius
       white-space nowrap
       margin 0
 </style>

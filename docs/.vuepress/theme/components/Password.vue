@@ -1,41 +1,64 @@
 <template>
-  <div class="password-shadow" :class="{'is-home': !isPage}">
-    <Background></Background>
-    <h3 class="title">{{isPage ? $frontmatter.title : $site.title}}</h3>
-    <p class="description" v-if="!isPage">{{$site.description}}</p>
-    <label class="inputBox" id="box">
-      <input
-        v-model="key"
-        type="password"
-        @keyup.enter="inter"
-        @focus="inputFocus"
-        @blur="inputBlur">
-      <span>{{warningText}}</span>
-      <button ref="passwordBtn" @click="inter">OK</button>
-    </label>
+  <div class="password-shadow">
+    <ModuleTransition>
+      <h3 v-show="recoShowModule" class="title">{{isPage ? $frontmatter.title : $site.title || $localeConfig.title}}</h3>
+    </ModuleTransition>
 
-    <div class="footer">
-      <span>
-        <i class="iconfont reco-theme"></i>
-        <a target="blank" href="https://www.npmjs.com/package/vuepress-theme-reco">vuePress-theme-reco</a>
-      </span>
-      <span>
-        <i class="iconfont reco-other"></i>
-        <a>{{ $themeConfig.author || $site.title }}</a>
-      </span>
-      <span>
-        <i class="iconfont reco-copyright"></i>
-        <a>{{ year }}</a>
-      </span>
-    </div>
+    <ModuleTransition delay="0.08">
+      <p class="description" v-if="recoShowModule && !isPage">{{$site.description || $localeConfig.description}}</p>
+    </ModuleTransition>
+
+    <ModuleTransition delay="0.16">
+      <label v-show="recoShowModule" class="inputBox" id="box">
+        <input
+          v-model="key"
+          type="password"
+          @keyup.enter="inter"
+          @focus="inputFocus"
+          @blur="inputBlur">
+        <span style="width: 300px">{{warningText}}</span>
+        <button ref="passwordBtn" @click="inter">OK</button>
+      </label>
+    </ModuleTransition>
+
+    <ModuleTransition delay="0.24">
+      <!-- <div v-show="recoShowModule" class="footer">
+        <span>
+          <i class="iconfont reco-theme"></i>
+          <a target="blank" href="https://vuepress-theme-reco.recoluan.com">vuePress-theme-reco</a>
+        </span>
+        <span>
+          <i class="iconfont reco-copyright"></i>
+          <a>
+            <span v-if="$themeConfig.author || $site.title">{{ $themeConfig.author || $site.title }}</span>
+            &nbsp;&nbsp;
+            <span v-if="$themeConfig.startYear">{{ $themeConfig.startYear }} - </span>
+            {{ year }}
+          </a>
+        </span>
+      </div> -->
+      <Footer v-show="recoShowModule" class="footer"/>
+    </ModuleTransition>
   </div>
 </template>
 
 <script>
-import Background from '@theme/components/Background'
+import md5 from 'md5'
+import ModuleTransition from '@theme/components/ModuleTransition'
+import moduleTransitonMixin from '@theme/mixins/moduleTransiton'
+import Footer from '@theme/components/Footer'
+
+const warningText = {
+  hintText: '此文章需要密码访问！',
+  error: '密码错误',
+  success: '密码正确',
+  inputFocus: '请输入密码',
+  inputBlur: '请输入密码后访问'
+}
 
 export default {
-  components: {Background},
+  mixins: [moduleTransitonMixin],
+  components: { ModuleTransition, Footer },
   props: {
     isPage: {
       type: Boolean,
@@ -43,9 +66,9 @@ export default {
     }
   },
   name: 'Password',
-  data() {
+  data () {
     return {
-      warningText: 'Konck! Knock!',
+      warningText: warningText.hintText,
       key: ''
     }
   },
@@ -56,92 +79,94 @@ export default {
   },
   methods: {
     inter () {
-      const keyVal = this.key.trim()
-      const key = this.isPage ? 'pageKey' : 'key'
-      sessionStorage.setItem(key, keyVal)
-      const isHasKey = this.isPage ? this.isHasPageKey() : this.isHasKey()
-      if (!isHasKey) {
-        this.warningText = 'Key Error'
+      const {
+        key,
+        isPage,
+        isHasPageKey,
+        isHasKey,
+        $refs: { passwordBtn }
+      } = this
+      const keyVal = md5(key.trim())
+      const pageKey = `pageKey${window.location.pathname}`
+      const keyName = isPage ? pageKey : 'key'
+      sessionStorage.setItem(keyName, keyVal)
+      const isKeyTrue = isPage ? isHasPageKey() : isHasKey()
+      if (!isKeyTrue) {
+        this.warningText = warningText.error
         return
-      } 
-      const passwordBtn = this.$refs.passwordBtn
-      const width = document.getElementById('box').getClientRects()[0].width
+      }
+
+      this.warningText = warningText.success
+
+      const width = document.getElementById('box').style.width
 
       passwordBtn.style.width = `${width - 2}px`
       passwordBtn.style.opacity = 1
       setTimeout(() => {
-        window.location.reload();
+        window.location.reload()
       }, 800)
     },
-    isHasKey () {
-      const keyPage = this.$themeConfig.keyPage
-      const keys = keyPage.keys
-      return keys && keys.indexOf(sessionStorage.getItem('key')) > -1
-    },
-    isHasPageKey () {
-      const pageKeys = this.$frontmatter.keys
-
-      return pageKeys && pageKeys.indexOf(sessionStorage.getItem('pageKey')) > -1
-    },
     inputFocus () {
-      this.warningText = 'Input Your Key'
+      this.warningText = warningText.inputFocus
     },
     inputBlur () {
-      this.warningText = 'Konck! Knock!'
+      this.warningText = warningText.inputBlur
+    },
+    isHasKey () {
+      let { keys } = this.$themeConfig.keyPage
+      keys = keys.map(item => md5(item))
+      return keys.indexOf(sessionStorage.getItem('key')) > -1
+    },
+    isHasPageKey () {
+      const pageKeys = this.$frontmatter.keys.map(item => md5(item))
+      const pageKey = `pageKey${window.location.pathname}`
+
+      return pageKeys && pageKeys.indexOf(sessionStorage.getItem(pageKey)) > -1
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-.theme-container.no-sidebar
-  .password-shadow
-    padding-left 0
-
-.password-shadow.is-home {
-  padding-left 0
-}
+@require '../styles/mode.styl'
 
 .password-shadow {
-  width 100vw;
-  height 100vh;
-  background #fff
+  overflow hidden
   position relative
-  padding-left: 20rem;
+  background #fff
+  background var(--background-color)
+  box-sizing border-box
   .title {
-    position: absolute;
-    left 0
-    right 0
-    top 12%
-    margin auto
+    margin 8rem auto 2rem
+    width 100%
     text-align center
-    color #666
     font-size 30px
     box-sizing: border-box;
-    padding: 0 10px;
+    text-shadow $textShadow
+    color $textColor
+    color var(--text-color)
   }
   .description {
-    position: absolute;
-    left 0
-    right 0
-    top 20%
-    margin auto
+    margin 0 auto 6rem
     text-align center
-    color #999
+    color $textColor
+    color var(--text-color)
     font-size 22px
     box-sizing: border-box;
     padding: 0 10px;
+    text-shadow $textShadow
   }
   .inputBox{
+    position absolute
+    top 40%
+    left 0
+    right 0
+    margin auto
+    display block
     max-width:700px;
     height: 100px;
     background: $accentColor;
-    border-radius: 2px;
-    position: absolute;
-    left 0
-    right 0
-    top 36%
-    margin auto
+    border-radius: $borderRadius
     padding-left 20px
     box-sizing border-box
     opacity 0.9
@@ -156,6 +181,7 @@ export default {
       outline: none;
       position: absolute;
       bottom:0;
+      left 20px
       opacity 0
       font-size 50px
       &:focus {
@@ -187,16 +213,17 @@ export default {
       font-size 30px
     }
     button{
+      overflow hidden
       width:0px;
       height:98px;
-      border-radius: 2px;
+      border-radius: $borderRadius
       position: absolute;
       border 1px solid $accentColor
+      background var(--background-color)
       right:1px;
       top 1px
       border:0;
       padding:0;
-      background: #fff;
       color: $accentColor;
       font-size:18px;
       outline:none;
@@ -211,7 +238,6 @@ export default {
     left 0
     right 0
     bottom 10%
-    margin auto
     padding: 2.5rem;
     text-align: center;
     color: lighten($textColor, 25%);
@@ -219,7 +245,7 @@ export default {
       margin-left 1rem
       > i {
         margin-right .5rem
-      } 
+      }
     }
   }
   @media (max-width: $MQMobile) {
@@ -227,17 +253,17 @@ export default {
       max-width:700px;
       height: 60px;
       background: $accentColor;
-      border-radius: 2px;
+      border-radius: $borderRadius
       position: absolute;
       left 0
       right 0
       top 43%
-      margin auto
-      padding-left 20px
+      margin auto 20px
+      padding-left 0
       box-sizing border-box
       opacity 0.9
       input{
-        width:600px;
+        width: 60%;
         height:100%;
         border:none;
         padding:0;
@@ -280,7 +306,7 @@ export default {
       button{
         width:0px;
         height:58px;
-        border-radius: 2px;
+        border-radius: $borderRadius
         position: absolute;
         border 1px solid $accentColor
         right:1px;
@@ -297,16 +323,15 @@ export default {
         z-index: 1;
       }
     }
+    .footer {
+      margin-left 0
+
+    }
+  }
+  @media (max-width: $MQNarrow) {
+    .footer {
+      margin-left 0
+    }
   }
 }
-
-// narrow desktop / iPad
-@media (max-width: $MQNarrow)
-  .password-shadow
-    padding-left $mobileSidebarWidth
-
-// wide mobile
-@media (max-width: $MQMobile)
-  .password-shadow
-    padding-left 0
 </style>
