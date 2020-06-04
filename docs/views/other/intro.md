@@ -148,7 +148,7 @@ module.exports = {
   git add -A
   git commit -m 'deploy'
   # 如果发布到 https://<USERNAME>.github.io
-  git push -f https://github.com/cym-git/cym-git.github.io.git master
+  git push -f https://github.com/fecym/fecym.github.io.git master
   # git push -f https://${blog}@${address} master:master
   # 如果发布到 https://<USERNAME>.github.io/<REPO>
   # git push -f git@github.com:<USERNAME>/<REPO>.git master:gh-pages
@@ -199,7 +199,7 @@ module.exports = {
   <img :src="$withBase('/imgs/Travis-setting-project.png')""/>
 </p>
 
-- **cym-git.github.io** 是我部署到的项目名字，也就是博客的地址，不需要把它打勾，我们需要打勾的是 **docs** 因为是从这个项目打包后直接部署到 **cym-git.github.io** 里面，这个以后进入的入口是点击 头像 -> Settings 进入，第一次进入会直接进入这个页面的
+- **fecym.github.io** 是我部署到的项目名字，也就是博客的地址，不需要把它打勾，我们需要打勾的是 **docs** 因为是从这个项目打包后直接部署到 **fecym.github.io** 里面，这个以后进入的入口是点击 头像 -> Settings 进入，第一次进入会直接进入这个页面的
 - 然后我们点击 logo 图标进入首页，左边会出现你选择的项目，然后最右边的 **More options**
 
 <p align="center" class="p-images">
@@ -207,7 +207,7 @@ module.exports = {
 </p>
 
 - 然后如下图，把在 **github** 里面生成的 **Personal access tokens** 放到 **Value** 里面，**Name** 里面起个名字。然后点击 **Add**，我起的名字叫做 blog
-- 还需要添加一个地址，就是你要部署到 github 地址，不需要带 **https** 的，比如我的地址是 **github.com/cym-git/cym-git.github.io.git**，**name** 是 **address**
+- 还需要添加一个地址，就是你要部署到 github 地址，不需要带 **https** 的，比如我的地址是 **github.com/fecym/fecym.github.io.git**，**name** 是 **address**
 
 <p align="center" class="p-images">
   <img :src="$withBase('/imgs/Travis-setting-project-settings-token.png')""/>
